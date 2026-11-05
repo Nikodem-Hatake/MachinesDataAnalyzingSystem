@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MachinesDataAnalyzingSystem.ClientWebApp/MachinesDataAnalyzingSystem.ClientWebApp.csproj" />
+    <Project Path="src/MachinesDataAnalyzingSystem.Core/MachinesDataAnalyzingSystem.Core.csproj" />
+    <Project Path="src/MachinesDataAnalyzingSystem.DataAdder/MachinesDataAnalyzingSystem.DataAdder.csproj" />
+    <Project Path="src/MachinesDataAnalyzingSystem.DataCollector/MachinesDataAnalyzingSystem.DataCollector.csproj" />
+    <Project Path="src/MachinesDataAnalyzingSystem.Infrastructure/MachinesDataAnalyzingSystem.Infrastructure.csproj" />
+    <Project Path="src/MachinesDataAnalyzingSystem.Shared/MachinesDataAnalyzingSystem.Shared.csproj" />
+    <Project Path="src/MachinesDataAnalyzingSystem.WebAPI/MachinesDataAnalyzingSystem.WebAPI.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MachinesDataAnalyzingSystem.ServiceTests/MachinesDataAnalyzingSystem.ServiceTests.csproj" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>

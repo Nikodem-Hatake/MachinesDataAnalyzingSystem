@@ -1,0 +1,41 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <MudGrid class="mt-5" Spacing="5">
+            <MudItem xs="12" lg="2">
+                <MachinesNavMenuComponent/>
+            </MudItem>
+            <MudItem xs="12" lg="10">
+                <MudGrid Spacing="5">
+                    <MudItem xs="12" lg="6">
+                        <AverageMachinesTemperatureChartComponent 
+                            AggregatedMachineDatasForMachineDTOS="_aggregatedMachineDatasForMachineDTOS"
+                        />
+                    </MudItem>
+                    <MudItem xs="12" lg="6">
+                        <TotalMachinesProcessedResourcesChartComponent 
+                            AggregatedMachineDatasForMachineDTOS="_aggregatedMachineDatasForMachineDTOS"
+                        />
+                    </MudItem>
+                    <MudItem xs="12" lg="6">
+                        <MaximumMachinesTemperatureChartComponent 
+                            AggregatedMachineDatasForMachineDTOS="_aggregatedMachineDatasForMachineDTOS"
+                        />
+                    </MudItem>
+                    <MudItem xs="12" lg="6">
+                        <TotalMachinesSecondsToProcessResourcesChartComponent
+                            AggregatedMachineDatasForMachineDTOS="_aggregatedMachineDatasForMachineDTOS"
+                        />
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </Authorized>
+    <Authorizing></Authorizing>
+    <NotAuthorized>
+        <RedirectToComponent Url="/Login"/>
+    </NotAuthorized>
+</AuthorizeView>

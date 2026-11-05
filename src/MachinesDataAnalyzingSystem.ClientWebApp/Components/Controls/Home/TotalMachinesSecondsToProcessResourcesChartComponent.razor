@@ -1,0 +1,13 @@
+﻿<MudCard style="height: 100%">
+    <MudCardHeader>
+        <MudText Typo="Typo.h6">Total number of seconds to process resources</MudText>
+    </MudCardHeader>
+    <MudCardContent class="align-center justify-center d-flex flex-column">
+        <MudChart
+            ChartLabels="_xAxisLabels.ToArray()"
+            ChartSeries="([_chartSeries.ToArray()])"
+            ChartType="ChartType.Donut"
+            T="float"
+        />
+    </MudCardContent>
+</MudCard>

@@ -1,0 +1,35 @@
+﻿<EditForm
+    FormName="LoginForm"
+    Model="@LoginRequest"
+    OnValidSubmit="OnValidSubmit"
+>
+    <DataAnnotationsValidator/>
+    <MudCard Outlined=true>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5">Login</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+
+        <MudCardContent>
+            <MudTextField
+                @bind-Value="LoginRequest.Email"
+                For="@(() => LoginRequest.Email)"
+                Label="Email"
+                InputType="InputType.Email"
+            />
+            <MudTextField
+                @bind-Value="LoginRequest.Password"
+                For="@(() => LoginRequest.Password)"
+                Label="Password"
+                InputType="InputType.Password"
+            />
+        </MudCardContent>
+
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled">Login</MudButton>
+            <MudSpacer/>
+            <MudLink Color="Color.Inherit" Href="/Register">Don't have an account? Register here</MudLink>
+        </MudCardActions>
+    </MudCard>
+</EditForm>

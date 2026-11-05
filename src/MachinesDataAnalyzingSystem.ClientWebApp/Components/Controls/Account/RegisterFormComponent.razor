@@ -1,0 +1,39 @@
+﻿<EditForm
+    FormName="RegisterForm"
+    Model="@RegisterRequest"
+    OnValidSubmit="OnValidSubmit"
+>
+    <DataAnnotationsValidator/>
+    <MudCard Outlined=true>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5">Register</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+
+        <MudCardContent>
+            <MudTextField
+                @bind-Value="RegisterRequest.Email"
+                For="@(() => RegisterRequest.Email)"
+                Label="Email"
+                InputType="InputType.Email"
+            />
+            <MudTextField
+                @bind-Value="RegisterRequest.Password"
+                For="@(() => RegisterRequest.Password)"
+                Label="Password"
+                InputType="InputType.Password"
+            />
+            <MudTextField
+                @bind-Value="RegisterRequest.ConfirmPassword"
+                For="@(() => RegisterRequest.ConfirmPassword)"
+                Label="Confirm password"
+                InputType="InputType.Password"
+            />
+        </MudCardContent>
+
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>

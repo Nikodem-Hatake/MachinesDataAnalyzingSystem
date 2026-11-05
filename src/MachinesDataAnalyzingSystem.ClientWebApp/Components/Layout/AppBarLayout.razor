@@ -1,0 +1,27 @@
+﻿<MudAppBar>
+    <MudLink Color="Color.Inherit" Href="/" Typo="Typo.h4">Machines Data Analyzing System</MudLink>
+    <MudIcon 
+        Icon="@Icons.Material.Filled.BarChart" 
+        Size="Size.Large"
+    />
+    <MudSpacer/>
+    <MudSwitch
+        Size="Size.Large"
+        ValueChanged="OnThemeModeChanged"
+        ThumbIcon="@(IsDarkMode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)" 
+        ThumbIconColor="Color.Dark"
+    />
+    <AuthorizeView>
+        <Authorized>
+            <MudText>@context.User.FindFirst(x => x.Type == ClaimTypes.Email)?.Value</MudText>
+            <MudIcon 
+                class="mx-2"
+                Icon="@Icons.Material.Filled.AccountCircle"
+            />
+            <MudLink Color="Color.Inherit" Href="/logout">logout</MudLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudLink Color="Color.Inherit" Href="/Login">Login</MudLink>
+        </NotAuthorized>
+    </AuthorizeView>
+</MudAppBar>

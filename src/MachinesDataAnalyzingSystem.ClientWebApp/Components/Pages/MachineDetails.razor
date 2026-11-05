@@ -1,0 +1,41 @@
+﻿@page "/MachineDetails/{MachineId:guid}/{MachineName}"
+
+<PageTitle>@MachineName</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <MudGrid class="mt-5" Spacing="5">
+            <MudItem xs="12" lg="5">
+                <AggregatedMachineDataFormComponent
+                    MachineId="MachineId"
+                    MachineName="@MachineName"
+                    OnValidSubmitEventCallback="OnValidSubmit"
+                />
+            </MudItem>
+            <MudItem xs="12" lg="7">
+                <MachineTemperatureChartComponent
+                    AggregatedMachineDatas="_aggregatedMachineDatas"
+                />
+            </MudItem>
+            <MudItem xs="12" lg="6">
+                <MachineAverageMotorsSpeedChartComponent
+                    AggregatedMachineDatas="_aggregatedMachineDatas"
+                />
+            </MudItem>
+            <MudItem xs="12" lg="3">
+                <MachineNumberOfProcessedResourcesChartComponent
+                    AggregatedMachineDatas="_aggregatedMachineDatas"
+                />
+            </MudItem>
+            <MudItem xs="12" lg="3">
+                <MachineNumberOfSecondsToProcessResourcesChartComponent
+                   AggregatedMachineDatas="_aggregatedMachineDatas"
+                />
+            </MudItem>
+        </MudGrid>
+    </Authorized>
+    <Authorizing></Authorizing>
+    <NotAuthorized>
+        <RedirectToComponent Url="/Login"/>
+    </NotAuthorized>
+</AuthorizeView>

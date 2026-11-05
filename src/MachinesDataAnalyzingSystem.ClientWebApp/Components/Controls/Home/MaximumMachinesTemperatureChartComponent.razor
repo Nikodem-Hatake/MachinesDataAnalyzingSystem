@@ -1,0 +1,14 @@
+﻿<MudCard style="height: 100%">
+    <MudCardHeader>
+        <MudText Typo="Typo.h6">Maximum temperature</MudText>
+    </MudCardHeader>
+    <MudCardContent class="align-center justify-center d-flex flex-column">
+        <MudChart
+            ChartLabels="_xAxisLabels.ToArray()"
+            ChartOptions="_options"
+            ChartSeries="_chartSeries"
+            ChartType="ChartType.Line"
+            T="float"
+        />
+    </MudCardContent>
+</MudCard>

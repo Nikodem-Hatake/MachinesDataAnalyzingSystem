@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+
+<MudSnackbarProvider/>
+<MudPopoverProvider />
+<MudThemeProvider IsDarkMode="_isDarkMode" />
+
+<MudLayout style="height: 100vh">
+    <AppBarLayout
+        IsDarkMode="_isDarkMode"
+        OnThemeModeChanged="OnThemeModeChanged"
+    />
+
+    <MudMainContent style="height: 100%">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" style="height: 100%">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>

@@ -1,0 +1,48 @@
+﻿<EditForm
+    FormName="AggregatedMachineDataForm"
+    Model="@AggregatedMachineDataRequest"
+    OnValidSubmit="OnValidSubmit"
+    style="height: 100%"
+>
+    <DataAnnotationsValidator/>
+    <MudCard Outlined=true style="height: 100%">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5">Get data for @MachineName</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+
+        <MudCardContent>
+            <MudDatePicker
+                @bind-Date="AggregatedMachineDataRequest.StartDate"
+                Label="Start date"
+            />
+            <MudTimePicker
+                @bind-Time="AggregatedMachineDataRequest.StartTime"
+                Label="Start time"
+                MinuteSelectionStep="10"
+            />
+            <MudSelect 
+                @bind-Value="AggregatedMachineDataRequest.HowLong"
+                Label="How long"
+            >
+                @foreach(var value in Enum.GetValues<HowLongIsAggregatedMachineData>())
+                {
+                    <MudSelectItem Value="@value">@value.ToString("g")</MudSelectItem>
+                }
+            </MudSelect>
+            <MudNumericField
+                @bind-Value="AggregatedMachineDataRequest.HowMany"
+                For="@(() => AggregatedMachineDataRequest.HowMany)"
+                Label="How many"
+                Max="10"
+                Min="1"
+                Step="1"
+            />
+        </MudCardContent>
+
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled">Get data</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>

@@ -1,0 +1,22 @@
+﻿@page "/Not-Found"
+@layout MainLayout
+
+<PageTitle>Not found</PageTitle>
+
+<MudGrid class="align-center" Justify="Justify.Center" style="height: 100%">
+    <MudItem xs="7" lg="4">
+        <MudCard Outlined=true>
+            <MudCardHeader>
+                <MudText Typo="Typo.h2">Not found</MudText>
+            </MudCardHeader>
+
+            <MudCardContent>
+                <MudText>The page you were looking for was not found.</MudText>
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudLink Color="Color.Inherit" Href="/">Back to home</MudLink>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+</MudGrid>

@@ -1,0 +1,94 @@
+services:
+  machinesdataanalyzingsystem.webapi:
+    image: ${DOCKER_REGISTRY-}machinesdataanalyzingsystemwebapi
+    build:
+      context: .
+      dockerfile: src/MachinesDataAnalyzingSystem.WebAPI/Dockerfile
+    container_name: webapi
+    depends_on:
+      machinesdataanalyzingsystem.cache:
+        condition: service_started
+      machinesdataanalyzingsystem.database:
+        condition: service_healthy
+      machinesdataanalyzingsystem.seq:
+        condition: service_started
+    ports:
+      - 7150:7150
+      - 5240:5240
+
+  machinesdataanalyzingsystem.clientwebapp:
+    image: ${DOCKER_REGISTRY-}machinesdataanalyzingsystemclientwebapp
+    build:
+      context: .
+      dockerfile: src/MachinesDataAnalyzingSystem.ClientWebApp/Dockerfile
+    container_name: clientwebapp
+    depends_on:
+      machinesdataanalyzingsystem.webapi:
+        condition: service_started
+    ports:
+      - 7191:7191
+      - 5145:5145
+
+  machinesdataanalyzingsystem.dataadder:
+    image: ${DOCKER_REGISTRY-}machinesdataanalyzingsystemdataadder
+    build:
+      context: .
+      dockerfile: src/MachinesDataAnalyzingSystem.DataAdder/Dockerfile
+    container_name: dataadder
+    depends_on:
+      machinesdataanalyzingsystem.brokerqueue:
+        condition: service_started
+      machinesdataanalyzingsystem.webapi:
+        condition: service_started
+
+  machinesdataanalyzingsystem.datacollector:
+    image: ${DOCKER_REGISTRY-}machinesdataanalyzingsystemdatacollector
+    build:
+      context: .
+      dockerfile: src/MachinesDataAnalyzingSystem.DataCollector/Dockerfile
+    container_name: datacollector
+    depends_on:
+      machinesdataanalyzingsystem.brokerqueue:
+        condition: service_started
+      machinesdataanalyzingsystem.webapi:
+        condition: service_started
+
+  machinesdataanalyzingsystem.database:
+    container_name: database
+    environment:
+      - POSTGRES_DB=MachinesData
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    image: postgres:latest
+    volumes:
+      - ./.containers/machinesdataanalyzingsystem.database:/var/lib/postgresql
+    ports:
+      - 5432:5432
+
+  machinesdataanalyzingsystem.cache:
+    container_name: cache
+    image: eqalpha/keydb:latest
+    ports:
+      - 6379:6379
+
+  machinesdataanalyzingsystem.brokerqueue:
+    container_name: brokerqueue
+    image: rabbitmq:management
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  machinesdataanalyzingsystem.seq:
+    container_name: seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=admin
+    image: datalust/seq
+    ports:
+      - 5341:80

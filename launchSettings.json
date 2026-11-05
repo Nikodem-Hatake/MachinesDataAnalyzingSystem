@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "machinesdataanalyzingsystem.webapi": "StartDebugging",
+        "machinesdataanalyzingsystem.dataadder": "StartDebugging",
+        "machinesdataanalyzingsystem.clientwebapp": "StartDebugging",
+        "machinesdataanalyzingsystem.datacollector": "StartDebugging"
+      }
+    }
+  }
+}

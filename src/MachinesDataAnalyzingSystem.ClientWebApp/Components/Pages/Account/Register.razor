@@ -1,0 +1,17 @@
+﻿@page "/Register"
+
+<PageTitle>Register</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <RedirectToComponent Url="/"/>
+    </Authorized>
+    <Authorizing></Authorizing>
+    <NotAuthorized>
+        <MudGrid class="align-center" Justify="Justify.Center" style="height: 100%">
+            <MudItem xs="8" lg="6">
+                <RegisterFormComponent />
+            </MudItem>
+        </MudGrid>
+    </NotAuthorized>
+</AuthorizeView>

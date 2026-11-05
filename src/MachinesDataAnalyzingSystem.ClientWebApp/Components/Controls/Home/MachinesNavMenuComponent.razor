@@ -1,0 +1,17 @@
+﻿<MudPaper Outlined=true style="height: 100%">
+    <MudNavMenu class="my-4">
+        <MudText class="mx-4" Typo="Typo.h5">Machines</MudText>
+        <MudDivider />
+        @if(_machines is null)
+        {
+            <MudText class="ml-4">Loading...</MudText>
+        }
+        else
+        {
+            foreach(var machine in _machines)
+            {
+                <MudNavLink Href="@($"/MachineDetails/{machine.MachineId}/{machine.MachineName}")">@machine.MachineName</MudNavLink>
+            }
+        }
+    </MudNavMenu>
+</MudPaper>
