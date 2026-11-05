@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MachinesDataAnalyzingSystem.Core\MachinesDataAnalyzingSystem.Core.csproj" />
-    <ProjectReference Include="..\MachinesDataAnalyzingSystem.Shared\MachinesDataAnalyzingSystem.Shared.csproj" />
+    <ProjectReference Include="..\..\src\MachinesDataAnalyzingSystem.Core\MachinesDataAnalyzingSystem.Core.csproj" />
+    <ProjectReference Include="..\..\src\MachinesDataAnalyzingSystem.Shared\MachinesDataAnalyzingSystem.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -21,7 +21,8 @@ public partial class TotalMachinesSecondsToProcessResourcesChartComponent
 
         foreach(var aggregatedMachineDatasForMachineDTO in AggregatedMachineDatasForMachineDTOS)
         {
-            _chartSeries.Add(aggregatedMachineDatasForMachineDTO.AggregatedMachineDataDTOS.Sum(x => x.TotalNumberOfProcessedResources));
+            _chartSeries.Add(aggregatedMachineDatasForMachineDTO.AggregatedMachineDataDTOS
+                .Sum(x => x.TotalNumberOfSecondsToProcessResources));
         }
     }
 }

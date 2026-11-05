@@ -4,10 +4,9 @@
     </MudCardHeader>
     <MudCardContent class="align-center justify-center d-flex flex-column">
         <MudChart
-            ChartLabels="_xAxisLabels.ToArray()"
-            ChartOptions="_options"
-            ChartSeries="_chartSeries"
-            ChartType="ChartType.Bar"
+            ChartLabels="_xAxisLabels"
+            ChartSeries="([_chartSeries.ToArray()])"
+            ChartType="ChartType.Pie"
             T="int"
         />
     </MudCardContent>

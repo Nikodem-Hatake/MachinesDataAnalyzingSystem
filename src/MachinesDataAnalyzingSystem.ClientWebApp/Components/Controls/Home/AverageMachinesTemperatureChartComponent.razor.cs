@@ -9,10 +9,9 @@ public partial class AverageMachinesTemperatureChartComponent
     [Parameter]
     public List<AggregatedMachineDatasForMachineDTO> AggregatedMachineDatasForMachineDTOS { get; set; }
     private List<ChartSeries<float>> _chartSeries = [];
-    private readonly LineChartOptions _options = new()
+    private readonly StackedBarChartOptions _options = new()
     {
         XAxisTitle = "Time",
-        YAxisRequireZeroPoint = true,
         YAxisTicks = 20,
         YAxisTitle = "Average temperature"
     };

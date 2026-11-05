@@ -6,9 +6,10 @@ namespace MachinesDataAnalyzingSystem.DataAdder.Services;
 
 public class QueueDataReciever : IQueueDataReciever
 {
-    private readonly IChannel? _channel;
-    private readonly IConnection? _connection;
+    private readonly IChannel _channel;
+    private readonly IConnection _connection;
     private readonly AsyncEventingBasicConsumer _consumer;
+    public IChannel Channel => _channel;
 
     public QueueDataReciever(IConfiguration configuration)
     {
