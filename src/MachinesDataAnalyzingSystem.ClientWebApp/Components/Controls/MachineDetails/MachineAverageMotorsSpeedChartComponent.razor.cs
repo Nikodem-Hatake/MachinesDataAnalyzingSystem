@@ -25,6 +25,7 @@ public partial class MachineAverageMotorsSpeedChartComponent
             return;
         }
 
+        _xAxisLabels.Clear();
         _xAxisLabels.AddRange(AggregatedMachineDatas.Select(x => x.StartDate.ToString
             (ChartXAxisLabelsDateFormater.GetFormat(AggregatedMachineDatas[0].HowLongIsAggregatedMachineData))));
         _chartSeries.Clear();

@@ -1,4 +1,4 @@
-﻿using MachinesDataAnalyzingSystem.Shared.DTO;
+﻿using MachinesDataAnalyzingSystem.Shared.DTO.MachineDatas;
 
 namespace MachinesDataAnalyzingSystem.DataCollector.ServiceContracts;
 

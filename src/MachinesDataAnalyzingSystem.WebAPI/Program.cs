@@ -98,9 +98,11 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 builder.Services.AddScoped<IJWTService, JWTService>();
+builder.Services.AddScoped<IAccountsRepository, AccountsRepository>();
 builder.Services.AddScoped<IAggregatedMachineDatasRepository, AggregatedMachineDatasRepository>();
 builder.Services.AddScoped<IMachineDatasRepository, MachineDatasRepository>();
 builder.Services.AddScoped<IMachinesRepository, MachinesRepository>();
+builder.Services.AddScoped<IAccountsService, AccountsService>();
 builder.Services.AddScoped<IAggregatedMachineDatasService, AggregatedMachineDatasService>();
 builder.Services.AddScoped<IMachineDatasService, MachineDatasService>();
 builder.Services.AddScoped<IMachinesService, MachinesService>();

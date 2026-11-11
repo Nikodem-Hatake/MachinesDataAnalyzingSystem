@@ -1,4 +1,4 @@
-﻿namespace MachinesDataAnalyzingSystem.Shared.DTO;
+﻿namespace MachinesDataAnalyzingSystem.Shared.DTO.MachineDatas;
 
 public class MachineDataDTO
 {

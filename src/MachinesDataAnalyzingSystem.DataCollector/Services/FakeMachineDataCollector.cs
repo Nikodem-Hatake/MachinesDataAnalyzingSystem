@@ -1,7 +1,7 @@
 ﻿using MachinesDataAnalyzingSystem.DataCollector.ServiceContracts;
 using MachinesDataAnalyzingSystem.Shared;
-using MachinesDataAnalyzingSystem.Shared.DTO;
 using MachinesDataAnalyzingSystem.Shared.DTO.Machine;
+using MachinesDataAnalyzingSystem.Shared.DTO.MachineDatas;
 using System.Text.Json;
 
 namespace MachinesDataAnalyzingSystem.DataCollector.Services;

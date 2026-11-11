@@ -1,6 +1,7 @@
 ﻿using MachinesDataAnalyzingSystem.Core.Domain.Identity;
 using MachinesDataAnalyzingSystem.Core.ServiceContracts;
 using MachinesDataAnalyzingSystem.Shared.DTO.Accounts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -9,9 +10,16 @@ namespace MachinesDataAnalyzingSystem.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AccountsController(SignInManager<ApplicationUser> signInManager, 
-    UserManager<ApplicationUser> userManager, IJWTService JWTService) : ControllerBase
+public class AccountsController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, 
+    IAccountsService accountsService, IJWTService JWTService) : ControllerBase
 {
+    [Authorize(Roles = "admin")]
+    [HttpGet]
+    public async Task<ActionResult<AccountsCountResponse>> GetAccountsCount()
+    {
+        return await accountsService.GetAccountsCount();
+    }
+
     [HttpPost("GenerateJWTToken")]
     public async Task<ActionResult<AuthenticationResponse>> PostGenerateJWTToken(JWTTokenRequest JWTTokenRequest)
     {

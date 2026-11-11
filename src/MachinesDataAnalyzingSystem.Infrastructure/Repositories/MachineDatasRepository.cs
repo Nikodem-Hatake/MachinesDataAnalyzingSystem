@@ -13,6 +13,12 @@ public class MachineDatasRepository(IDbContextFactory<ApplicationDbContext> dbCo
         await dbContext.SaveChangesAsync();
     }
 
+    public async Task<long> GetMachineDatasCount()
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        return await dbContext.MachineDatas.LongCountAsync();
+    }
+
     public async Task<List<MachineData>> GetMachineDatasForAggregation(Guid machineId, DateTime startDate, DateTime endDate)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync();
