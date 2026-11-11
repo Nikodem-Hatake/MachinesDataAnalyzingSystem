@@ -6,8 +6,13 @@ namespace MachinesDataAnalyzingSystem.ClientWebApp.Components.Pages.Account;
 
 public partial class Logout(AuthenticationStateProvider authenticationStateProvider, NavigationManager navigationManager)
 {
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if(!firstRender)
+        {
+            return;
+        }
+
         await ((CustomAuthenticationStateProvider)authenticationStateProvider).Logout();
         navigationManager.NavigateTo("/Login");
     }

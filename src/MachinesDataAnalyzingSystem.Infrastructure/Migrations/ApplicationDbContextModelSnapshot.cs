@@ -157,6 +157,15 @@ namespace MachinesDataAnalyzingSystem.Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("175a5441-c032-409c-816a-314e1a1be1e9"),
+                            ConcurrencyStamp = "789b5c91-3c55-47d9-802e-ceab7cf2dbc1",
+                            Name = "admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("MachinesDataAnalyzingSystem.Core.Domain.Identity.ApplicationUser", b =>

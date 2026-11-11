@@ -44,5 +44,16 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 Name = "Heat regulator"
             }
         );
+
+        modelBuilder.Entity<ApplicationRole>().HasData
+        (
+            new ApplicationRole()
+            { 
+                ConcurrencyStamp = Guid.Parse("789B5C91-3C55-47D9-802E-CEAB7CF2DBC1").ToString(),
+                Id = Guid.Parse("175A5441-C032-409C-816A-314E1A1BE1E9"),
+                Name = "admin",
+                NormalizedName = "ADMIN"
+            }
+        );
     }
 }

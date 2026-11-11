@@ -10,7 +10,7 @@ namespace MachinesDataAnalyzingSystem.WebAPI.Controllers;
 [ApiController]
 public class MachinesController(IMachinesService machinesService) : ControllerBase
 {
-    [Authorize]
+    [Authorize(Roles = "admin")]
     [HttpDelete]
     public async Task DeleteMachine(MachineDeleteRequest machineDeleteRequest)
     {
@@ -31,14 +31,14 @@ public class MachinesController(IMachinesService machinesService) : ControllerBa
         return await GetMachines();
     }
 
-    [Authorize]
+    [Authorize(Roles = "admin")]
     [HttpPost]
     public async Task PostMachine(MachineAddRequest machineAddRequest)
     {
         await machinesService.AddMachine(machineAddRequest);
     }
 
-    [Authorize]
+    [Authorize(Roles = "admin")]
     [HttpPut]
     public async Task PutMachine(MachineEditRequest machineEditRequest)
     {

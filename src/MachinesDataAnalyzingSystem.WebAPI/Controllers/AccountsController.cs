@@ -18,23 +18,23 @@ public class AccountsController(SignInManager<ApplicationUser> signInManager,
         var principal = JWTService.GetPrincipalFromJWTToken(JWTTokenRequest.JWTToken);
         if(principal is null)
         {
-            return BadRequest("Invalid JWT token.");
+            return Unauthorized("Invalid JWT token.");
         }
 
         var email = principal.FindFirstValue(ClaimTypes.Email);
         if(email is null)
         {
-            return BadRequest("Email not found in token.");
+            return Unauthorized("Email not found in token.");
         }
 
         var user = await userManager.FindByEmailAsync(email);
         if(user is null || user.JWTRefreshToken != JWTTokenRequest.JWTRefreshToken
             || user.JWTRefreshTokenExpirationDate <= DateTime.UtcNow)
         {
-            return BadRequest("Invalid JWT refresh token.");
+            return Unauthorized("Invalid JWT refresh token.");
         }
 
-        var response = JWTService.GenerateJWTToken(user);
+        var response = JWTService.GenerateJWTToken(user, await userManager.GetRolesAsync(user));
         user.JWTRefreshToken = response.JWTRefreshToken;
         user.JWTRefreshTokenExpirationDate = response.JWTRefreshTokenExpirationDate;
         await userManager.UpdateAsync(user);
@@ -56,8 +56,8 @@ public class AccountsController(SignInManager<ApplicationUser> signInManager,
         {
             return BadRequest("Email or password not matched.");
         }
-
-        var response = JWTService.GenerateJWTToken(user);
+        
+        var response = JWTService.GenerateJWTToken(user, await userManager.GetRolesAsync(user));
         user.JWTRefreshToken = response.JWTRefreshToken;
         user.JWTRefreshTokenExpirationDate = response.JWTRefreshTokenExpirationDate;
         await userManager.UpdateAsync(user);
@@ -86,7 +86,7 @@ public class AccountsController(SignInManager<ApplicationUser> signInManager,
         }
 
         await signInManager.SignInAsync(user, false);
-        var response = JWTService.GenerateJWTToken(user);
+        var response = JWTService.GenerateJWTToken(user, await userManager.GetRolesAsync(user));
         user.JWTRefreshToken = response.JWTRefreshToken;
         user.JWTRefreshTokenExpirationDate = response.JWTRefreshTokenExpirationDate;
         await userManager.UpdateAsync(user);
