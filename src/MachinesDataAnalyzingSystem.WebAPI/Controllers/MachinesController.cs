@@ -19,14 +19,14 @@ public class MachinesController(IMachinesService machinesService) : ControllerBa
 
     [Authorize]
     [HttpGet]
-    public async Task<List<MachineResponse>> GetMachines()
+    public async Task<ActionResult<List<MachineResponse>>> GetMachines()
     {
         return await machinesService.GetMachines();
     }
 
     [HttpGet("forService")]
     [ServiceFilter<APIKeyAuthorizationFilter>]
-    public async Task<List<MachineResponse>> GetMachinesForService()
+    public async Task<ActionResult<List<MachineResponse>>> GetMachinesForService()
     {
         return await GetMachines();
     }

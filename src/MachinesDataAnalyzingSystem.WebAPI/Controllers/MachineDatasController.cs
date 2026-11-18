@@ -14,7 +14,7 @@ public class MachineDatasController(IMachineDatasService machineDataService) : C
     [HttpGet]
     public async Task<ActionResult<MachineDatasCountResponse>> GetMachineDatasCount()
     {
-        return Ok(await machineDataService.GetMachineDatasCount());
+        return await machineDataService.GetMachineDatasCount();
     }
 
     [HttpPost]
