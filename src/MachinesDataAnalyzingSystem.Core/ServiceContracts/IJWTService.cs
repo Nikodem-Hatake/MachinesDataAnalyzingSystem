@@ -6,6 +6,7 @@ namespace MachinesDataAnalyzingSystem.Core.ServiceContracts;
 
 public interface IJWTService
 {
+    string GenerateJWTRefreshToken();
     AuthenticationResponse GenerateJWTToken(ApplicationUser user, IList<string> roles);
     ClaimsPrincipal? GetPrincipalFromJWTToken(string token);
 }

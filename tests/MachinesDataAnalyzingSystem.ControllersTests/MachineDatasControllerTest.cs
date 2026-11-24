@@ -3,6 +3,7 @@ using FluentAssertions;
 using MachinesDataAnalyzingSystem.Core.ServiceContracts;
 using MachinesDataAnalyzingSystem.Shared.DTO.MachineDatas;
 using MachinesDataAnalyzingSystem.WebAPI.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace MachinesDataAnalyzingSystem.ControllersTests;
@@ -38,11 +39,23 @@ public class MachineDatasControllerTest
     [Fact]
     public async Task PostMachineDataShouldAddMachineDataSuccessfully()
     {
-        _machineDatasServiceMock.Setup(x => x.AddMachineData(It.IsAny<MachineDataDTO>()));
+        _machineDatasServiceMock.Setup(x => x.AddMachineData(It.IsAny<MachineDataDTO>()))
+            .ReturnsAsync(true);
 
-        var action = async () => _machineDatasController.PostMachineData(_fixture.Create<MachineDataDTO>());
+        var result = await _machineDatasController.PostMachineData(_fixture.Create<MachineDataDTO>());
 
-        await action.Should().NotThrowAsync();
+        result.Should().BeOfType<CreatedResult>();
+    }
+
+    [Fact]
+    public async Task PostMachineDataShouldNotAddMachineDataForMachineNotFound()
+    {
+        _machineDatasServiceMock.Setup(x => x.AddMachineData(It.IsAny<MachineDataDTO>()))
+            .ReturnsAsync(false);
+
+        var result = await _machineDatasController.PostMachineData(_fixture.Create<MachineDataDTO>());
+
+        result.Should().BeOfType<BadRequestObjectResult>();
     }
 
     #endregion

@@ -17,9 +17,17 @@ public class Machine
         {
             return machineResponse.MachineName == Name
                 && machineResponse.MachineId == Id;
-            
         }
 
         return base.Equals(obj);
+    }
+
+    public MachineResponse ToDTO()
+    {
+        return new()
+        {
+            MachineId = Id,
+            MachineName = Name
+        };
     }
 }

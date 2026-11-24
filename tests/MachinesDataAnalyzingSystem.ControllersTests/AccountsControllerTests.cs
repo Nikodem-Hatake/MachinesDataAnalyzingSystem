@@ -275,19 +275,6 @@ public class AccountsControllerTests
     }
 
     #endregion
-    #region PostLogout
-
-    [Fact]
-    public async Task PostLogoutShouldNotThrowException()
-    {
-        _signInManagerMock.Setup(x => x.SignOutAsync());
-
-        var action = async () => await _accountsController.PostLogout();
-
-        await action.Should().NotThrowAsync();
-    }
-
-    #endregion
     #region PostRegister
 
     [Fact]

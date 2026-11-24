@@ -30,7 +30,7 @@ public class AccountsController(SignInManager<ApplicationUser> signInManager, Us
         }
 
         var email = principal.FindFirstValue(ClaimTypes.Email);
-        if(email is null)
+        if(string.IsNullOrWhiteSpace(email))
         {
             return Unauthorized("Email not found in token.");
         }
@@ -56,7 +56,7 @@ public class AccountsController(SignInManager<ApplicationUser> signInManager, Us
         var user = await userManager.FindByEmailAsync(loginRequest.Email);
         if(user is null)
         {
-            return BadRequest("User not found.");
+            return BadRequest("Email or password not matched.");
         }
 
         var result = await signInManager.PasswordSignInAsync(user, loginRequest.Password, false, false);
@@ -72,10 +72,27 @@ public class AccountsController(SignInManager<ApplicationUser> signInManager, Us
         return Ok(response);
     }
 
+    [Authorize]
     [HttpPost("logout")]
-    public async Task PostLogout()
+    public async Task<IActionResult> PostLogout()
     {
+        var email = User.FindFirstValue(ClaimTypes.Email);
+        if(string.IsNullOrWhiteSpace(email))
+        {
+            return Unauthorized("Invalid JWT token.");
+        }
+
+        var user = await userManager.FindByEmailAsync(email);
+        if(user is null)
+        {
+            return Unauthorized("Email not found in token.");
+        }
+
+        user.JWTRefreshToken = JWTService.GenerateJWTRefreshToken();
+        user.JWTRefreshTokenExpirationDate = DateTime.UtcNow.AddDays(-1);
+        await userManager.UpdateAsync(user);
         await signInManager.SignOutAsync();
+        return Ok();
     }
 
     [HttpPost("register")]

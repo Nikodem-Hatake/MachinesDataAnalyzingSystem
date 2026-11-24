@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using MachinesDataAnalyzingSystem.Core.Domain.Entities;
 using MachinesDataAnalyzingSystem.Core.Domain.RepositoryContracts;
 using MachinesDataAnalyzingSystem.Core.ServiceContracts;
 using MachinesDataAnalyzingSystem.Core.Services;
@@ -24,22 +25,22 @@ public class MachineDatasServiceTest
     public async Task AddMachineDataShouldAddMachineDataSuccessfullyWhenMachineIsFound()
     {
         var machineDataDTO = new MachineDataDTO();
-        _machinesRepositoryMock.Setup(x => x.ContainsMachine(It.IsAny<Guid>())).ReturnsAsync(true);
+        _machineDatasRepositoryMock.Setup(x => x.AddMachineData(It.IsAny<MachineData>())).ReturnsAsync(true);
 
-        var action = async () => await _machineDatasService.AddMachineData(machineDataDTO);
+        var result = await _machineDatasService.AddMachineData(machineDataDTO);
 
-        await action.Should().NotThrowAsync();
+        result.Should().BeTrue();
     }
 
     [Fact]
     public async Task AddMachineDataShouldNotAddMachineDataWhenMachineIsNotFound()
     {
         var machineDataDTO = new MachineDataDTO();
-        _machinesRepositoryMock.Setup(x => x.ContainsMachine(It.IsAny<Guid>())).ReturnsAsync(false);
+        _machineDatasRepositoryMock.Setup(x => x.AddMachineData(It.IsAny<MachineData>())).ReturnsAsync(false);
 
-        var action = async () => await _machineDatasService.AddMachineData(machineDataDTO);
+        var result = await _machineDatasService.AddMachineData(machineDataDTO);
 
-        await action.Should().ThrowExactlyAsync<ArgumentException>();
+        result.Should().BeFalse();
     }
 
     #endregion

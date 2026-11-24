@@ -110,7 +110,7 @@ public class AggregatedMachineDatasService(IAggregatedMachineDatasRepository agg
         DateTime startDate, HowLongIsAggregatedMachineData howLong, int howMany)
     {
         ClearDateTimeUnnecessaryValues(ref startDate, howLong);
-        if(!IsDateTimeCorrectForAggregation(startDate, howLong, howMany))
+        if(!IsDateTimeCorrectForAggregation(ref startDate, howLong, howMany))
         {
             return [];
         }
@@ -161,7 +161,7 @@ public class AggregatedMachineDatasService(IAggregatedMachineDatasRepository agg
         return [];
     }
     
-    private bool IsDateTimeCorrectForAggregation(DateTime dateTime, HowLongIsAggregatedMachineData howLong, int howMany)
+    private bool IsDateTimeCorrectForAggregation(ref DateTime dateTime, HowLongIsAggregatedMachineData howLong, int howMany)
     {
         switch(howLong)
         {

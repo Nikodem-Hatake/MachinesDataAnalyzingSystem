@@ -4,8 +4,8 @@ namespace MachinesDataAnalyzingSystem.Core.ServiceContracts;
 
 public interface IMachinesService
 {
-    Task AddMachine(MachineAddRequest machineAddRequest);
-    Task DeleteMachine(MachineDeleteRequest machineDeleteRequest);
-    Task EditMachine(MachineEditRequest machineEditRequest);
+    Task<bool> AddMachine(MachineAddRequest machineAddRequest);
+    Task<bool> DeleteMachine(MachineDeleteRequest machineDeleteRequest);
+    Task<bool> EditMachine(MachineEditRequest machineEditRequest);
     Task<List<MachineResponse>> GetMachines();
 }

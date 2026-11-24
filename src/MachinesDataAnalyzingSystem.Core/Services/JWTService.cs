@@ -12,7 +12,7 @@ namespace MachinesDataAnalyzingSystem.Core.Services;
 
 public class JWTService(IConfiguration configuration) : IJWTService
 {
-    private string GenerateJWTRefreshToken()
+    public string GenerateJWTRefreshToken()
     {
         var bytes = new byte[64];
         var randomNumberGenerator = RandomNumberGenerator.Create();
@@ -65,12 +65,21 @@ public class JWTService(IConfiguration configuration) : IJWTService
             ValidateLifetime = false
         };
         var tokenHandler = new JwtSecurityTokenHandler();
-        var result = tokenHandler.ValidateToken(token, tokenValidaitonParameters, out var securityToken);
+        ClaimsPrincipal result;
+        SecurityToken securityToken;
+        try
+        {
+            result = tokenHandler.ValidateToken(token, tokenValidaitonParameters, out securityToken);
+        }
+        catch(Exception)
+        {
+            return null;
+        }
 
         if(securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals
             (SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
-            throw new SecurityTokenException("Invalid JWT token.");
+            return null;
         }
 
         return result;

@@ -1,4 +1,5 @@
-﻿using MachinesDataAnalyzingSystem.Shared.DTO.Accounts;
+﻿using MachinesDataAnalyzingSystem.ClientWebApp.ServiceContracts;
+using MachinesDataAnalyzingSystem.Shared.DTO.Accounts;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System.IdentityModel.Tokens.Jwt;
@@ -6,7 +7,7 @@ using System.Security.Claims;
 
 namespace MachinesDataAnalyzingSystem.ClientWebApp.Authentication;
 
-public class CustomAuthenticationStateProvider(IJSRuntime JSRuntime) : AuthenticationStateProvider
+public class CustomAuthenticationStateProvider(IJSRuntime JSRuntime, IWebAPIService webAPIService) : AuthenticationStateProvider
 {
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
@@ -38,6 +39,14 @@ public class CustomAuthenticationStateProvider(IJSRuntime JSRuntime) : Authentic
 
     public async Task Logout()
     {
+        try
+        {
+            await webAPIService.SendAsync(HttpMethod.Post, "/api/accounts/logout");
+        }
+        catch(Exception)
+        {
+
+        }
         await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "JWTToken");
         await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "JWTTokenExpirationDate");
         await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "JWTRefreshToken");

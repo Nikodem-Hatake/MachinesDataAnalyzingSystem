@@ -20,6 +20,20 @@ public class JWTServiceTest
         _JWTService = new JWTService(_configurationMock.Object);
     }
 
+    #region GenerateJWTRefreshToken
+
+    [Fact]
+    public async Task GenerateJWTRefreshTokenShouldGenerateRandomJWTRefreshToken()
+    {
+        var refreshTokenOne = _JWTService.GenerateJWTRefreshToken();
+        var refreshTokenTwo = _JWTService.GenerateJWTRefreshToken();
+
+        refreshTokenOne.Should().NotBeNullOrWhiteSpace();
+        refreshTokenTwo.Should().NotBeNullOrWhiteSpace();
+        refreshTokenOne.Should().NotBe(refreshTokenTwo);
+    }
+
+    #endregion
     #region GenerateJWTToken
 
     [Fact]
@@ -71,19 +85,19 @@ public class JWTServiceTest
     }
 
     [Fact]
-    public async Task GetPrincipalFromJWTTokenShouldThrowExceptionForInvalidJWTToken()
+    public async Task GetPrincipalFromJWTTokenShouldReturnNullForInvalidJWTToken()
     {
         _configurationMock.Setup(x => x["JWTSettings:Key"]).Returns(_fixture.Create<string>());
         _configurationMock.Setup(x => x["JWTSettings:Audience"]).Returns(_fixture.Create<string>());
         _configurationMock.Setup(x => x["JWTSettings:Issuer"]).Returns(_fixture.Create<string>());
 
-        var action = () => _JWTService.GetPrincipalFromJWTToken(_fixture.Create<string>());
+        var claimsPrincipal = _JWTService.GetPrincipalFromJWTToken(_fixture.Create<string>());
 
-        action.Should().Throw();
+        claimsPrincipal.Should().BeNull();
     }
 
     [Fact]
-    public async Task GetPrincipalFromJWTTokenShouldThrowExceptionForInvalidJWTTokenKey()
+    public async Task GetPrincipalFromJWTTokenShouldReturnNullForInvalidJWTTokenKey()
     {
         int randomExpirationValue = Random.Shared.Next(5, 11);
         _configurationMock.Setup(x => x["JWTSettings:TokenExpirationMinutes"]).Returns(randomExpirationValue.ToString());
@@ -94,13 +108,13 @@ public class JWTServiceTest
         var token = _JWTService.GenerateJWTToken(_fixture.Create<ApplicationUser>(), _fixture.Create<List<string>>()).JWTToken;
 
         _configurationMock.Setup(x => x["JWTSettings:Key"]).Returns(_fixture.Create<string>());
-        var action = () => _JWTService.GetPrincipalFromJWTToken(token);
+        var claimsPrincipal = _JWTService.GetPrincipalFromJWTToken(_fixture.Create<string>());
 
-        action.Should().Throw();
+        claimsPrincipal.Should().BeNull();
     }
 
     [Fact]
-    public async Task GetPrincipalFromJWTTokenShouldThrowExceptionForInvalidJWTTokenAudience()
+    public async Task GetPrincipalFromJWTTokenShouldReturnNullForInvalidJWTTokenAudience()
     {
         int randomExpirationValue = Random.Shared.Next(5, 11);
         _configurationMock.Setup(x => x["JWTSettings:TokenExpirationMinutes"]).Returns(randomExpirationValue.ToString());
@@ -111,13 +125,13 @@ public class JWTServiceTest
         var token = _JWTService.GenerateJWTToken(_fixture.Create<ApplicationUser>(), _fixture.Create<List<string>>()).JWTToken;
 
         _configurationMock.Setup(x => x["JWTSettings:Audience"]).Returns(_fixture.Create<string>());
-        var action = () => _JWTService.GetPrincipalFromJWTToken(token);
+        var claimsPrincipal = _JWTService.GetPrincipalFromJWTToken(_fixture.Create<string>());
 
-        action.Should().Throw();
+        claimsPrincipal.Should().BeNull();
     }
 
     [Fact]
-    public async Task GetPrincipalFromJWTTokenShouldThrowExceptionForInvalidJWTTokenIssuer()
+    public async Task GetPrincipalFromJWTTokenShouldReturnNullForInvalidJWTTokenIssuer()
     {
         int randomExpirationValue = Random.Shared.Next(5, 11);
         _configurationMock.Setup(x => x["JWTSettings:TokenExpirationMinutes"]).Returns(randomExpirationValue.ToString());
@@ -128,9 +142,9 @@ public class JWTServiceTest
         var token = _JWTService.GenerateJWTToken(_fixture.Create<ApplicationUser>(), _fixture.Create<List<string>>()).JWTToken;
 
         _configurationMock.Setup(x => x["JWTSettings:Issuer"]).Returns(_fixture.Create<string>());
-        var action = () => _JWTService.GetPrincipalFromJWTToken(token);
+        var claimsPrincipal = _JWTService.GetPrincipalFromJWTToken(_fixture.Create<string>());
 
-        action.Should().Throw();
+        claimsPrincipal.Should().BeNull();
     }
 
     #endregion

@@ -27,47 +27,64 @@ public class MachinesServiceTest
     {
         var machineAddRequest = _fixture.Build<MachineAddRequest>()
             .With(x => x.MachineName, "Plastic converter").Create();
-        _machinesRepositoryMock.Setup(x => x.AddMachine(It.IsAny<Machine>()));
+        _machinesRepositoryMock.Setup(x => x.AddMachine(It.IsAny<Machine>()))
+            .ReturnsAsync(true);
 
-        var action = async () => await _machinesService.AddMachine(machineAddRequest);
+        var result = await _machinesService.AddMachine(machineAddRequest);
 
-        await action.Should().NotThrowAsync();
+        result.Should().BeTrue();
     }
 
     [Fact]
-    public async Task AddMachineShouldThrowWhenMachineNameIsNull()
+    public async Task AddMachineShouldNotAddMachineWhenMachineNameIsNull()
     {
         var machineAddRequest = _fixture.Build<MachineAddRequest>()
             .With(x => x.MachineName, value: null).Create();
-        _machinesRepositoryMock.Setup(x => x.AddMachine(It.IsAny<Machine>()));
+        _machinesRepositoryMock.Setup(x => x.AddMachine(It.IsAny<Machine>()))
+            .ReturnsAsync(true);
 
-        var action = async () => await _machinesService.AddMachine(machineAddRequest);
+        var result = await _machinesService.AddMachine(machineAddRequest);
 
-        await action.Should().ThrowExactlyAsync<ArgumentException>();
+        result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task AddMachineShouldThrowWhenMachineNameIsTooShort()
+    public async Task AddMachineShouldNotAddMachineWhenMachineNameIsTooShort()
     {
         var machineAddRequest = _fixture.Build<MachineAddRequest>()
             .With(x => x.MachineName, "").Create();
-        _machinesRepositoryMock.Setup(x => x.AddMachine(It.IsAny<Machine>()));
+        _machinesRepositoryMock.Setup(x => x.AddMachine(It.IsAny<Machine>()))
+            .ReturnsAsync(true);
 
-        var action = async () => await _machinesService.AddMachine(machineAddRequest);
+        var result = await _machinesService.AddMachine(machineAddRequest);
 
-        await action.Should().ThrowExactlyAsync<ArgumentException>();
+        result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task AddMachineShouldThrowWhenMachineNameIsTooLong()
+    public async Task AddMachineShouldNotAddMachineWhenMachineNameIsTooLong()
     {
         var machineAddRequest = _fixture.Build<MachineAddRequest>()
             .With(x => x.MachineName, new string('A', 1001)).Create();
-        _machinesRepositoryMock.Setup(x => x.AddMachine(It.IsAny<Machine>()));
+        _machinesRepositoryMock.Setup(x => x.AddMachine(It.IsAny<Machine>()))
+            .ReturnsAsync(true);
 
-        var action = async () => await _machinesService.AddMachine(machineAddRequest);
+        var result = await _machinesService.AddMachine(machineAddRequest);
 
-        await action.Should().ThrowExactlyAsync<ArgumentException>();
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task AddMachineShouldNotAddMachineWhenMachineNameAlreadyExists()
+    {
+        var machineAddRequest = _fixture.Build<MachineAddRequest>()
+            .With(x => x.MachineName, new string('A', 1001)).Create();
+        _machinesRepositoryMock.Setup(x => x.AddMachine(It.IsAny<Machine>()))
+            .ReturnsAsync(false);
+
+        var result = await _machinesService.AddMachine(machineAddRequest);
+
+        result.Should().BeFalse();
     }
 
     #endregion
@@ -77,11 +94,24 @@ public class MachinesServiceTest
     public async Task DeleteMachineShouldDeleteMachineSuccessfully()
     {
         var machineDeleteRequest = _fixture.Create<MachineDeleteRequest>();
-        _machinesRepositoryMock.Setup(x => x.DeleteMachine(It.IsAny<Guid>()));
+        _machinesRepositoryMock.Setup(x => x.DeleteMachine(It.IsAny<Guid>()))
+            .ReturnsAsync(true);
 
-        var action = async () => await _machinesService.DeleteMachine(machineDeleteRequest);
+        var result = await _machinesService.DeleteMachine(machineDeleteRequest);
 
-        await action.Should().NotThrowAsync();
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task DeleteMachineShouldNotDeleteMachineWhenMachineWithSelectedNameAlreadyExists()
+    {
+        var machineDeleteRequest = _fixture.Create<MachineDeleteRequest>();
+        _machinesRepositoryMock.Setup(x => x.DeleteMachine(It.IsAny<Guid>()))
+            .ReturnsAsync(false);
+
+        var result = await _machinesService.DeleteMachine(machineDeleteRequest);
+
+        result.Should().BeFalse();
     }
 
     #endregion
@@ -92,47 +122,64 @@ public class MachinesServiceTest
     {
         var machineEditRequest = _fixture.Build<MachineEditRequest>()
             .With(x => x.NewMachineName, "Plastic converter").Create();
-        _machinesRepositoryMock.Setup(x => x.EditMachine(It.IsAny<Machine>()));
+        _machinesRepositoryMock.Setup(x => x.EditMachine(It.IsAny<Machine>()))
+            .ReturnsAsync(true);
 
-        var action = async() => await _machinesService.EditMachine(machineEditRequest);
+        var result = await _machinesService.EditMachine(machineEditRequest);
 
-        await action.Should().NotThrowAsync();
+        result.Should().BeTrue();
     }
 
     [Fact]
-    public async Task EditMachineShouldThrowWhenMachineNameIsNull()
+    public async Task EditMachineShouldNotEditMachineWhenMachineNameIsNull()
     {
         var machineEditRequest = _fixture.Build<MachineEditRequest>()
             .With(x => x.NewMachineName, value: null).Create();
-        _machinesRepositoryMock.Setup(x => x.EditMachine(It.IsAny<Machine>()));
+        _machinesRepositoryMock.Setup(x => x.EditMachine(It.IsAny<Machine>()))
+            .ReturnsAsync(true);
 
-        var action = async () => await _machinesService.EditMachine(machineEditRequest);
+        var result = await _machinesService.EditMachine(machineEditRequest);
 
-        await action.Should().ThrowExactlyAsync<ArgumentException>();
+        result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task EditMachineShouldThrowWhenMachineNameIsTooShort()
+    public async Task EditMachineShouldNotEditMachineWhenMachineNameIsTooShort()
     {
         var machineEditRequest = _fixture.Build<MachineEditRequest>()
             .With(x => x.NewMachineName, "").Create();
-        _machinesRepositoryMock.Setup(x => x.EditMachine(It.IsAny<Machine>()));
+        _machinesRepositoryMock.Setup(x => x.EditMachine(It.IsAny<Machine>()))
+            .ReturnsAsync(true);
 
-        var action = async () => await _machinesService.EditMachine(machineEditRequest);
+        var result = await _machinesService.EditMachine(machineEditRequest);
 
-        await action.Should().ThrowExactlyAsync<ArgumentException>();
+        result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task EditMachineShouldThrowWhenMachineNameIsTooLong()
+    public async Task EditMachineShouldNotEditMachineWhenMachineNameIsTooLong()
     {
         var machineEditRequest = _fixture.Build<MachineEditRequest>()
             .With(x => x.NewMachineName, new string('A', 1001)).Create();
-        _machinesRepositoryMock.Setup(x => x.EditMachine(It.IsAny<Machine>()));
+        _machinesRepositoryMock.Setup(x => x.EditMachine(It.IsAny<Machine>()))
+            .ReturnsAsync(true);
 
-        var action = async () => await _machinesService.EditMachine(machineEditRequest);
+        var result = await _machinesService.EditMachine(machineEditRequest);
 
-        await action.Should().ThrowExactlyAsync<ArgumentException>();
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task EditMachineShouldNotEditMachineWhenMachineNotExists()
+    {
+        var machineEditRequest = _fixture.Build<MachineEditRequest>()
+            .With(x => x.NewMachineName, new string('A', 1001)).Create();
+        _machinesRepositoryMock.Setup(x => x.EditMachine(It.IsAny<Machine>()))
+            .ReturnsAsync(false);
+
+        var result = await _machinesService.EditMachine(machineEditRequest);
+
+        result.Should().BeFalse();
     }
 
     #endregion

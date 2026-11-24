@@ -4,6 +4,6 @@ namespace MachinesDataAnalyzingSystem.Core.ServiceContracts;
 
 public interface IMachineDatasService
 {
-    Task AddMachineData(MachineDataDTO machineDataDTO);
+    Task<bool> AddMachineData(MachineDataDTO machineDataDTO);
     Task<MachineDatasCountResponse> GetMachineDatasCount();
 }

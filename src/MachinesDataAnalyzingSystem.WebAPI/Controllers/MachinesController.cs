@@ -12,9 +12,13 @@ public class MachinesController(IMachinesService machinesService) : ControllerBa
 {
     [Authorize(Roles = "admin")]
     [HttpDelete]
-    public async Task DeleteMachine(MachineDeleteRequest machineDeleteRequest)
+    public async Task<IActionResult> DeleteMachine(MachineDeleteRequest machineDeleteRequest)
     {
-        await machinesService.DeleteMachine(machineDeleteRequest);
+        if(await machinesService.DeleteMachine(machineDeleteRequest))
+        {
+            return Ok();
+        }
+        return BadRequest("Invalid request.");
     }
 
     [Authorize]
@@ -33,15 +37,23 @@ public class MachinesController(IMachinesService machinesService) : ControllerBa
 
     [Authorize(Roles = "admin")]
     [HttpPost]
-    public async Task PostMachine(MachineAddRequest machineAddRequest)
+    public async Task<IActionResult> PostMachine(MachineAddRequest machineAddRequest)
     {
-        await machinesService.AddMachine(machineAddRequest);
+        if(await machinesService.AddMachine(machineAddRequest))
+        {
+            return Created();
+        }
+        return BadRequest("Invalid request.");
     }
 
     [Authorize(Roles = "admin")]
     [HttpPut]
-    public async Task PutMachine(MachineEditRequest machineEditRequest)
+    public async Task<IActionResult> PutMachine(MachineEditRequest machineEditRequest)
     {
-        await machinesService.EditMachine(machineEditRequest);
+        if(await machinesService.EditMachine(machineEditRequest))
+        {
+            return Ok();
+        }
+        return BadRequest("Invalid request");
     }
 }

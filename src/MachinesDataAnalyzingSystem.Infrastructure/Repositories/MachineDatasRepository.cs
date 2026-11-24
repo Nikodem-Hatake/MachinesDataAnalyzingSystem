@@ -6,11 +6,17 @@ namespace MachinesDataAnalyzingSystem.Infrastructure.Repositories;
 
 public class MachineDatasRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory) : IMachineDatasRepository
 {
-    public async Task AddMachineData(MachineData machineData)
+    public async Task<bool> AddMachineData(MachineData machineData)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        if((await dbContext.Machines.FirstOrDefaultAsync(x => x.Id == machineData.MachineId)) is null)
+        {
+            return false;
+        }
+
         await dbContext.MachineDatas.AddAsync(machineData);
         await dbContext.SaveChangesAsync();
+        return true;
     }
 
     public async Task<long> GetMachineDatasCount()

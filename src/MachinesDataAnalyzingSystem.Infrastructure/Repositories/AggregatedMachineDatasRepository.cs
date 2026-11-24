@@ -10,6 +10,13 @@ public class AggregatedMachineDatasRepository(IDbContextFactory<ApplicationDbCon
     public async Task AddAggregatedMachineData(AggregatedMachineData aggregatedMachineData)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        if((await dbContext.AggregatedMachineDatas.FirstOrDefaultAsync(x => x.MachineId == aggregatedMachineData.MachineId
+            && x.StartDate == aggregatedMachineData.StartDate && x.HowLongIsAggregatedMachineData 
+            == aggregatedMachineData.HowLongIsAggregatedMachineData)) is not null)
+        {
+            return;
+        }
+
         await dbContext.AggregatedMachineDatas.AddAsync(aggregatedMachineData);
         await dbContext.SaveChangesAsync();
     }

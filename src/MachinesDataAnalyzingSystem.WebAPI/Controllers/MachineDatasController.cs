@@ -19,8 +19,12 @@ public class MachineDatasController(IMachineDatasService machineDataService) : C
 
     [HttpPost]
     [ServiceFilter<APIKeyAuthorizationFilter>]
-    public async Task PostMachineData(MachineDataDTO machineDataDTO)
+    public async Task<IActionResult> PostMachineData(MachineDataDTO machineDataDTO)
     {
-        await machineDataService.AddMachineData(machineDataDTO);
+        if(await machineDataService.AddMachineData(machineDataDTO))
+        {
+            return Created();
+        }
+        return BadRequest($"Machine with Id {machineDataDTO.MachineId} was not found.");
     }
 }
