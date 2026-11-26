@@ -39,6 +39,48 @@ public class AccountsControllerTests
             _accountsServiceMock.Object, _JWTServiceMock.Object);
     }
 
+    #region DeleteAdminRoleFromAccount
+
+    [Fact]
+    public async Task DeleteAdminRoleFromAccountShouldReturnCorrectResponseForCorrectRequest()
+    {
+        _userManagerMock.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync(_fixture.Create<ApplicationUser>());
+        _userManagerMock.Setup(x => x.RemoveFromRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
+
+        var response = await _accountsController.DeleteAdminRoleFromAccount(_fixture.Create<string>());
+
+        response.Should().BeOfType<OkResult>();
+    }
+
+    [Fact]
+    public async Task DeleteAdminRoleFromAccountShouldReturnBadRequestResponseForUserNotFound()
+    {
+        _userManagerMock.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync(value: null);
+        _userManagerMock.Setup(x => x.RemoveFromRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
+
+        var response = await _accountsController.DeleteAdminRoleFromAccount(_fixture.Create<string>());
+
+        response.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task DeleteAdminRoleFromAccountShouldReturnBadRequestResponseForRemovingRoleFailed()
+    {
+        _userManagerMock.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync(_fixture.Create<ApplicationUser>());
+        _userManagerMock.Setup(x => x.RemoveFromRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Failed());
+
+        var response = await _accountsController.DeleteAdminRoleFromAccount(_fixture.Create<string>());
+
+        response.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    #endregion
     #region GetAccountsCount
 
     [Fact]
@@ -307,6 +349,48 @@ public class AccountsControllerTests
         var response = await _accountsController.PostRegister(_fixture.Create<RegisterRequest>());
 
         response.Result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    #endregion
+    #region PutAccountToAdminRole
+
+    [Fact]
+    public async Task PutAccountToAdminRoleShouldReturnCorrectResponseForCorrectRequest()
+    {
+        _userManagerMock.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync(_fixture.Create<ApplicationUser>());
+        _userManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
+
+        var response = await _accountsController.PutAccountToAdminRole(_fixture.Create<string>());
+
+        response.Should().BeOfType<OkResult>();
+    }
+
+    [Fact]
+    public async Task PutAccountToAdminRoleShouldReturnBadRequestResponseForUserNotFound()
+    {
+        _userManagerMock.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync(value: null);
+        _userManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
+
+        var response = await _accountsController.PutAccountToAdminRole(_fixture.Create<string>());
+
+        response.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task PutAccountToAdminRoleShouldReturnBadRequestResponseForAddingRoleFailed()
+    {
+        _userManagerMock.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync(_fixture.Create<ApplicationUser>());
+        _userManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Failed());
+
+        var response = await _accountsController.PutAccountToAdminRole(_fixture.Create<string>());
+
+        response.Should().BeOfType<BadRequestObjectResult>();
     }
 
     #endregion

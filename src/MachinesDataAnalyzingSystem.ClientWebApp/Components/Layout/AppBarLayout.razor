@@ -13,15 +13,28 @@
     />
     <AuthorizeView>
         <Authorized>
-            <MudText>@context.User.FindFirst(x => x.Type == ClaimTypes.Email)?.Value</MudText>
-            <MudIcon 
-                class="mx-2"
-                Icon="@Icons.Material.Filled.AccountCircle"
+            <MudIconButton 
+                Icon="@Icons.Material.Filled.Menu" 
+                OnClick="ToggleMenu"
             />
-            <MudLink Color="Color.Inherit" Href="/logout">logout</MudLink>
         </Authorized>
         <NotAuthorized>
             <MudLink Color="Color.Inherit" Href="/Login">Login</MudLink>
         </NotAuthorized>
     </AuthorizeView>
 </MudAppBar>
+
+<AuthorizeView>
+    <Authorized>
+        <MudDrawer @bind-Open="_isMenuOpened">
+            <MudButton Disabled="true" EndIcon="@Icons.Material.Filled.AccountCircle" Variant="Variant.Text">@context.User.FindFirst(x => x.Type == ClaimTypes.Email)?.Value </MudButton>
+            <MudNavMenu>
+                <MudNavLink Href="/logout">logout</MudNavLink>
+                @if(context.User.IsInRole("admin"))
+                {
+                    <MudNavLink Href="/admin">admin panel</MudNavLink>
+                }
+            </MudNavMenu>
+        </MudDrawer>
+    </Authorized>
+</AuthorizeView>

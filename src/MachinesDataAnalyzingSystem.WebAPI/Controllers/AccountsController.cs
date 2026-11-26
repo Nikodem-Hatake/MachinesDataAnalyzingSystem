@@ -4,6 +4,7 @@ using MachinesDataAnalyzingSystem.Shared.DTO.Accounts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace MachinesDataAnalyzingSystem.WebAPI.Controllers;
@@ -13,6 +14,25 @@ namespace MachinesDataAnalyzingSystem.WebAPI.Controllers;
 public class AccountsController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, 
     IAccountsService accountsService, IJWTService JWTService) : ControllerBase
 {
+    [Authorize(Roles = "admin")]
+    [HttpDelete("removeAdminRole/{email}")]
+    public async Task<IActionResult> DeleteAdminRoleFromAccount([Required][EmailAddress] string email)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        if(user is null)
+        {
+            return BadRequest("User not found.");
+        }
+
+        var result = await userManager.RemoveFromRoleAsync(user, "admin");
+        if(!result.Succeeded)
+        {
+            return BadRequest("Can't remove admin role from user.");
+        }
+
+        return Ok();
+    }
+
     [Authorize(Roles = "admin")]
     [HttpGet]
     public async Task<ActionResult<AccountsCountResponse>> GetAccountsCount()
@@ -116,5 +136,24 @@ public class AccountsController(SignInManager<ApplicationUser> signInManager, Us
         user.JWTRefreshTokenExpirationDate = response.JWTRefreshTokenExpirationDate;
         await userManager.UpdateAsync(user);
         return Ok(response);
+    }
+
+    [Authorize(Roles = "admin")]
+    [HttpPut("addAdminRole/{email}")]
+    public async Task<IActionResult> PutAccountToAdminRole([Required][EmailAddress] string email)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        if(user is null)
+        {
+            return BadRequest("User not found.");
+        }
+
+        var result = await userManager.AddToRoleAsync(user, "admin");
+        if(!result.Succeeded)
+        {
+            return BadRequest("Can't add admin role to user.");
+        }
+
+        return Ok();
     }
 }

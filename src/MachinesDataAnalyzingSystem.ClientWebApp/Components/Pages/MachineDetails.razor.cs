@@ -7,6 +7,7 @@ namespace MachinesDataAnalyzingSystem.ClientWebApp.Components.Pages;
 public partial class MachineDetails
 {
     private List<AggregatedMachineDataDTO> _aggregatedMachineDatas = [];
+    private bool _isFirstRender = false;
     [Parameter]
     public Guid MachineId { get; set; }
     [Parameter]
@@ -15,5 +16,14 @@ public partial class MachineDetails
     private async Task OnValidSubmit(List<AggregatedMachineDataDTO> aggregatedMachineDatas)
     {
         _aggregatedMachineDatas = aggregatedMachineDatas;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        _isFirstRender = firstRender;
+        if(firstRender)
+        {
+            StateHasChanged();
+        }
     }
 }

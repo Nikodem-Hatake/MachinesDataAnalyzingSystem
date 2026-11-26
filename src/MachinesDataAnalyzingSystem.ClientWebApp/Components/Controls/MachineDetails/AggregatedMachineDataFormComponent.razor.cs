@@ -4,11 +4,11 @@ using MachinesDataAnalyzingSystem.Shared.DTO.AggregatedMachineDatas;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using System.Text.Json;
+using System.Net;
 
 namespace MachinesDataAnalyzingSystem.ClientWebApp.Components.Controls.MachineDetails;
 
-public partial class AggregatedMachineDataFormComponent(ISnackbar snackbar, IWebAPIService webAPIService)
+public partial class AggregatedMachineDataFormComponent(ISnackbar snackbar, IWebAPIService webAPIService, NavigationManager navigationManager)
 {
     public AggregatedMachineDataRequest AggregatedMachineDataRequest { get; set; } = new();
     [Parameter]
@@ -27,17 +27,17 @@ public partial class AggregatedMachineDataFormComponent(ISnackbar snackbar, IWeb
                 (GlobalConstants.DATE_TIME_FORMAT_TO_SEND_IN_HTTP_REQUEST)}/{((int)AggregatedMachineDataRequest.HowLong)}/{
                 AggregatedMachineDataRequest.HowMany}");
             response.EnsureSuccessStatusCode();
-            await OnValidSubmitEventCallback.InvokeAsync(JsonSerializer.Deserialize<List<AggregatedMachineDataDTO>>
-                (await response.Content.ReadAsStringAsync(), new JsonSerializerOptions()
-                {
-                    PropertyNameCaseInsensitive = true
-                }));
+            await OnValidSubmitEventCallback.InvokeAsync(await response.Content.ReadFromJsonAsync<List<AggregatedMachineDataDTO>>());
         }
         catch(HttpRequestException e)
         {
             if(e.StatusCode is null)
             {
                 snackbar.Add("Server is unavailable. Please try later.", Severity.Error);
+            }
+            else if(e.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                navigationManager.NavigateTo("/Logout");
             }
             else
             {

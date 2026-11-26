@@ -36,6 +36,9 @@
     </Authorized>
     <Authorizing></Authorizing>
     <NotAuthorized>
-        <RedirectToComponent Url="/Login"/>
+        @if(_isFirstRender)
+        {
+            <RedirectToComponent Url="/Login"/>
+        }
     </NotAuthorized>
 </AuthorizeView>

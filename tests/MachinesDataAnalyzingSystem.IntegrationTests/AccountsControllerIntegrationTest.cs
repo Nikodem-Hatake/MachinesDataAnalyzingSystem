@@ -11,6 +11,157 @@ namespace MachinesDataAnalyzingSystem.IntegrationTests;
 public class AccountsControllerIntegrationTest(WebAPIWebApplicationFactory webAPIWebApplicationFactory) 
     : BaseIntegrationTest(webAPIWebApplicationFactory)
 {
+    private async Task CreateTestAdminUser(string email)
+    {
+        try
+        {
+            await _client.PostAsJsonAsync("/api/accounts/register", new RegisterRequest()
+            {
+                ConfirmPassword = VALID_TEST_ADMIN_PASSWORD,
+                Email = email,
+                Password = VALID_TEST_ADMIN_PASSWORD
+            });
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+            await dbContext.UserRoles.AddAsync(new()
+            {
+                RoleId = (await dbContext.Roles.FirstAsync(x => x.NormalizedName == "ADMIN")).Id,
+                UserId = (await dbContext.Users.FirstAsync(x => x.Email == email)).Id
+            });
+            await dbContext.SaveChangesAsync();
+        }
+        catch(Exception) 
+        {
+            
+        }
+    }
+
+    private async Task CreateTestUser(string email)
+    {
+        try
+        {
+            await _client.PostAsJsonAsync("/api/accounts/register", new RegisterRequest()
+            {
+                ConfirmPassword = VALID_TEST_ADMIN_PASSWORD,
+                Email = email,
+                Password = VALID_TEST_ADMIN_PASSWORD
+            });
+        }
+        catch(Exception)
+        {
+
+        }
+    }
+
+    #region DeleteAdminRoleFromAccount
+
+    [Fact]
+    public async Task DeleteAdminRoleFromAccountShouldDeleteUserAdminRoleFromDatabaseForCorrectRequest()
+    {
+        var email = nameof(DeleteAdminRoleFromAccountShouldDeleteUserAdminRoleFromDatabaseForCorrectRequest) + "@example.com";
+        await CreateTestAdminUser(email);
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/accounts/removeAdminRole/{email}");
+        request.Headers.Authorization = new("Bearer", (await GetValidTestAdminAuthenticationResponse()).JWTToken);
+
+        var response = await _client.SendAsync(request);
+
+        response.EnsureSuccessStatusCode();
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.FirstAsync(x => x.Email == email);
+        var adminRole = await dbContext.Roles.FirstAsync(x => x.NormalizedName == "ADMIN");
+        var userAdminRole = await dbContext.UserRoles.FirstOrDefaultAsync(x => x.RoleId == adminRole.Id && x.UserId == user.Id);
+        userAdminRole.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task DeleteAdminRoleFromAccountShouldReturnBadRequestStatusCodeForUserWithoutAdminRole()
+    {
+        var email = nameof(DeleteAdminRoleFromAccountShouldReturnBadRequestStatusCodeForUserWithoutAdminRole) + "@example.com";
+        await CreateTestUser(email);
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/accounts/removeAdminRole/{email}");
+        request.Headers.Authorization = new("Bearer", (await GetValidTestAdminAuthenticationResponse()).JWTToken);
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task DeleteAdminRoleFromAccountShouldReturnBadRequestStatusCodeForUserNotFound()
+    {
+        var email = nameof(DeleteAdminRoleFromAccountShouldReturnBadRequestStatusCodeForUserNotFound) + "@example.com";
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/accounts/removeAdminRole/{email}");
+        request.Headers.Authorization = new("Bearer", (await GetValidTestAdminAuthenticationResponse()).JWTToken);
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task DeleteAdminRoleFromAccountShouldReturnBadRequestStatusCodeForInvalidEmail()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/accounts/removeAdminRole/{_fixture.Create<string>()}");
+        request.Headers.Authorization = new("Bearer", (await GetValidTestAdminAuthenticationResponse()).JWTToken);
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task DeleteAdminRoleFromAccountShouldReturnUnauthorizedStatusCodeForInvalidJWTTokenWithoutRemovingItsRole()
+    {
+        var email = nameof(DeleteAdminRoleFromAccountShouldReturnUnauthorizedStatusCodeForInvalidJWTTokenWithoutRemovingItsRole) + "@example.com";
+        await CreateTestAdminUser(email);
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/accounts/removeAdminRole/{email}");
+        request.Headers.Authorization = new("Bearer", "");
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.FirstAsync(x => x.Email == email);
+        var adminRole = await dbContext.Roles.FirstAsync(x => x.NormalizedName == "ADMIN");
+        var userAdminRole = await dbContext.UserRoles.FirstOrDefaultAsync(x => x.RoleId == adminRole.Id && x.UserId == user.Id);
+        userAdminRole.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task DeleteAdminRoleFromAccountShouldReturnForbiddenStatusCodeForJWTTokenWithoutAdminRoleWithoutRemovingItsRole()
+    {
+        var email = nameof(DeleteAdminRoleFromAccountShouldReturnForbiddenStatusCodeForJWTTokenWithoutAdminRoleWithoutRemovingItsRole) + "@example.com";
+        await CreateTestAdminUser(email);
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/accounts/removeAdminRole/{email}");
+        request.Headers.Authorization = new("Bearer", (await GetValidTestUserAuthenticationResponse()).JWTToken);
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.FirstAsync(x => x.Email == email);
+        var adminRole = await dbContext.Roles.FirstAsync(x => x.NormalizedName == "ADMIN");
+        var userAdminRole = await dbContext.UserRoles.FirstOrDefaultAsync(x => x.RoleId == adminRole.Id && x.UserId == user.Id);
+        userAdminRole.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task DeleteAdminRoleFromAccountShouldReturnUnauthorizedStatusCodeForNoAuthorizationWithoutRemovingItsRole()
+    {
+        var email = nameof(DeleteAdminRoleFromAccountShouldReturnUnauthorizedStatusCodeForNoAuthorizationWithoutRemovingItsRole) + "@example.com";
+        await CreateTestAdminUser(email);
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/accounts/removeAdminRole/{email}");
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.FirstAsync(x => x.Email == email);
+        var adminRole = await dbContext.Roles.FirstAsync(x => x.NormalizedName == "ADMIN");
+        var userAdminRole = await dbContext.UserRoles.FirstOrDefaultAsync(x => x.RoleId == adminRole.Id && x.UserId == user.Id);
+        userAdminRole.Should().NotBeNull();
+    }
+
+    #endregion
     #region GetAccountsCount
 
     [Fact]
@@ -423,6 +574,116 @@ public class AccountsControllerIntegrationTest(WebAPIWebApplicationFactory webAP
         var response = await _client.SendAsync(request);
 
         response.StatusCode.Should().Be(HttpStatusCode.UnsupportedMediaType);
+    }
+
+    #endregion
+    #region PutAccountToAdminRole
+
+    [Fact]
+    public async Task PutAccountToAdminRoleShouldAddAdminRoleToUserForCorrectRequest()
+    {
+        var email = nameof(PutAccountToAdminRoleShouldAddAdminRoleToUserForCorrectRequest) + "@example.com";
+        await CreateTestUser(email);
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/api/accounts/addAdminRole/{email}");
+        request.Headers.Authorization = new("Bearer", (await GetValidTestAdminAuthenticationResponse()).JWTToken);
+
+        var response = await _client.SendAsync(request);
+
+        response.EnsureSuccessStatusCode();
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.FirstAsync(x => x.Email == email);
+        var adminRole = await dbContext.Roles.FirstAsync(x => x.NormalizedName == "ADMIN");
+        var userAdminRole = await dbContext.UserRoles.FirstOrDefaultAsync(x => x.RoleId == adminRole.Id && x.UserId == user.Id);
+        userAdminRole.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task PutAccountToAdminRoleShouldReturnBadRequestStatusCodeForUserWithAdminRole()
+    {
+        var email = nameof(PutAccountToAdminRoleShouldReturnBadRequestStatusCodeForUserWithAdminRole) + "@example.com";
+        await CreateTestAdminUser(email);
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/api/accounts/addAdminRole/{email}");
+        request.Headers.Authorization = new("Bearer", (await GetValidTestAdminAuthenticationResponse()).JWTToken);
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task PutAccountToAdminRoleShouldReturnBadRequestStatusCodeForUserNotFound()
+    {
+        var email = nameof(PutAccountToAdminRoleShouldReturnBadRequestStatusCodeForUserNotFound) + "@example.com";
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/api/accounts/addAdminRole/{email}");
+        request.Headers.Authorization = new("Bearer", (await GetValidTestAdminAuthenticationResponse()).JWTToken);
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task PutAccountToAdminRoleShouldReturnBadRequestStatusCodeForInvalidEmail()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/api/accounts/addAdminRole/{_fixture.Create<string>()}");
+        request.Headers.Authorization = new("Bearer", (await GetValidTestAdminAuthenticationResponse()).JWTToken);
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task PutAccountToAdminRoleShouldReturnUnauthorizedStatusCodeForInvalidJWTTokenWithoutAddingAdminRoleToUser()
+    {
+        var email = nameof(PutAccountToAdminRoleShouldReturnUnauthorizedStatusCodeForInvalidJWTTokenWithoutAddingAdminRoleToUser) + "@example.com";
+        await CreateTestUser(email);
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/api/accounts/addAdminRole/{email}");
+        request.Headers.Authorization = new("Bearer", "");
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.FirstAsync(x => x.Email == email);
+        var adminRole = await dbContext.Roles.FirstAsync(x => x.NormalizedName == "ADMIN");
+        var userAdminRole = await dbContext.UserRoles.FirstOrDefaultAsync(x => x.RoleId == adminRole.Id && x.UserId == user.Id);
+        userAdminRole.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task PutAccountToAdminRoleShouldReturnForbiddenStatusCodeForJWTTokenWithoutAdminRoleWithoutAddingAdminRoleToUser()
+    {
+        var email = nameof(PutAccountToAdminRoleShouldReturnForbiddenStatusCodeForJWTTokenWithoutAdminRoleWithoutAddingAdminRoleToUser) + "@example.com";
+        await CreateTestUser(email);
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/api/accounts/addAdminRole/{email}");
+        request.Headers.Authorization = new("Bearer", (await GetValidTestUserAuthenticationResponse()).JWTToken);
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.FirstAsync(x => x.Email == email);
+        var adminRole = await dbContext.Roles.FirstAsync(x => x.NormalizedName == "ADMIN");
+        var userAdminRole = await dbContext.UserRoles.FirstOrDefaultAsync(x => x.RoleId == adminRole.Id && x.UserId == user.Id);
+        userAdminRole.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task PutAccountToAdminRoleShouldReturnUnauthorizedStatusCodeForNoAuthorizationWithoutAddingAdminRoleToUser()
+    {
+        var email = nameof(PutAccountToAdminRoleShouldReturnUnauthorizedStatusCodeForNoAuthorizationWithoutAddingAdminRoleToUser) + "@example.com";
+        await CreateTestUser(email);
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/api/accounts/addAdminRole/{email}");
+
+        var response = await _client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.FirstAsync(x => x.Email == email);
+        var adminRole = await dbContext.Roles.FirstAsync(x => x.NormalizedName == "ADMIN");
+        var userAdminRole = await dbContext.UserRoles.FirstOrDefaultAsync(x => x.RoleId == adminRole.Id && x.UserId == user.Id);
+        userAdminRole.Should().BeNull();
     }
 
     #endregion

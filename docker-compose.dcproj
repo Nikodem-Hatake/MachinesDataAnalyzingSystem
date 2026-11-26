@@ -14,5 +14,12 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="src\MachinesDataAnalyzingSystem.ClientWebApp\Components\Controls\Admin\AccountsCountComponent.razor.cs" />
+    <None Include="src\MachinesDataAnalyzingSystem.ClientWebApp\Components\Controls\Admin\MachineDatasCountComponent.razor.cs" />
+    <None Include="src\MachinesDataAnalyzingSystem.ClientWebApp\Components\Controls\Admin\MachinesManagementComponent.razor.cs" />
+    <None Include="src\MachinesDataAnalyzingSystem.ClientWebApp\Components\Pages\Account\Login.razor.cs" />
+    <None Include="src\MachinesDataAnalyzingSystem.ClientWebApp\Components\Pages\Account\Register.razor.cs" />
+    <None Include="src\MachinesDataAnalyzingSystem.ClientWebApp\Components\Pages\Admin.razor.cs" />
+    <None Include="src\MachinesDataAnalyzingSystem.ClientWebApp\Components\Pages\Home.razor.cs" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,29 @@
+﻿<MudCard>
+    <MudCardHeader>
+        <MudText Typo="Typo.h4">Machines</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudSelect @bind-Value="_selectedMachine" Label="Select machine">
+            @foreach(var machine in _machines)
+            {
+                <MudSelectItem Value="@machine">@machine.MachineName</MudSelectItem>
+            }
+        </MudSelect>
+    </MudCardContent>
+    <MudCardActions>
+        <MudGrid Spacing="5">
+            <MudItem class="align-content-center" xs="3" lg="2">
+                <MudButton OnClick="async () => await DeleteMachine()" Color="Color.Error" Variant="Variant.Filled">Delete</MudButton>
+            </MudItem>
+            <MudItem xs="9" lg="6">
+                <MudTextField @bind-Value="_newMachineName" Label="New machine name" Variant="Variant.Outlined"/>
+            </MudItem>
+            <MudItem class="align-content-center" xs="3" lg="2">
+                <MudButton OnClick="async () => await EditMachine()" Color="Color.Primary" Variant="Variant.Filled">Edit</MudButton>
+            </MudItem>
+            <MudItem class="align-content-center" xs="3" lg="2">
+                <MudButton OnClick="async () => await CreateMachine()" Color="Color.Success" Variant="Variant.Filled">Create</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudCardActions>
+</MudCard>

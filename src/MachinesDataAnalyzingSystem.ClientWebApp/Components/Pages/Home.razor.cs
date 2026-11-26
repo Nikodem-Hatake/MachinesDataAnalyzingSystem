@@ -5,16 +5,17 @@ using MachinesDataAnalyzingSystem.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Net;
-using System.Text.Json;
 
 namespace MachinesDataAnalyzingSystem.ClientWebApp.Components.Pages;
 
 public partial class Home(IWebAPIService webAPIHttpClient, ISnackbar snackbar, NavigationManager navigationManager)
 {
     private List<AggregatedMachineDatasForMachineDTO> _aggregatedMachineDatasForMachineDTOS;
+    private bool _isFirstRender = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        _isFirstRender = firstRender;
         if(!firstRender)
         {
             return;
@@ -26,12 +27,7 @@ public partial class Home(IWebAPIService webAPIHttpClient, ISnackbar snackbar, N
                 .UtcNow.AddMinutes(-60).ToString(GlobalConstants.DATE_TIME_FORMAT_TO_SEND_IN_HTTP_REQUEST)}/{((int)
                 HowLongIsAggregatedMachineData.TenMinutes)}/{6}");
             response.EnsureSuccessStatusCode();
-            _aggregatedMachineDatasForMachineDTOS = JsonSerializer.Deserialize<List<AggregatedMachineDatasForMachineDTO>>
-                (await response.Content.ReadAsStringAsync(), new JsonSerializerOptions()
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-            StateHasChanged();
+            _aggregatedMachineDatasForMachineDTOS = await response.Content.ReadFromJsonAsync<List<AggregatedMachineDatasForMachineDTO>>();
         }
         catch(HttpRequestException e)
         {
@@ -48,5 +44,6 @@ public partial class Home(IWebAPIService webAPIHttpClient, ISnackbar snackbar, N
                 snackbar.Add($"HTTP error with status code: {e.StatusCode.ToString()}", Severity.Error);
             }
         }
+        StateHasChanged();
     }
 }
